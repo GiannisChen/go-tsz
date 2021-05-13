@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/dgryski/go-tsz"
-	"github.com/dgryski/go-tsz/testdata"
 	"math"
 	"math/rand"
 	"os"
 	"text/tabwriter"
+
+	"github.com/dgryski/go-tsz"
+	"github.com/dgryski/go-tsz/testdata"
 )
 
 // collection of 24h worth of minutely points, with different characteristics.
@@ -64,6 +65,18 @@ var LargeTestDataPosf = make([]testdata.Point, 60*24)
 var LargeTestDataPos0f = make([]testdata.Point, 60*24)
 var LargeTestDataf = make([]testdata.Point, 60*24)
 var LargeTestData0f = make([]testdata.Point, 60*24)
+
+func Round(f float64) float64 {
+	if f < 0 {
+		return math.Ceil(f - 0.5)
+	}
+	return math.Floor(f + .5)
+}
+
+func RoundNum(f float64, places int) float64 {
+	shift := math.Pow(10, float64(places))
+	return Round(f*shift) / shift
+}
 
 func main() {
 	for i := 0; i < 60*24; i++ {
