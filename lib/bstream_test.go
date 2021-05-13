@@ -1,7 +1,6 @@
 package tsz
 
 import (
-	"fmt"
 	"io"
 	"testing"
 )
@@ -24,11 +23,10 @@ func TestReadBitEOF1(t *testing.T) {
 func TestReadBitEOF2(t *testing.T) {
 	b := newBReader([]byte{1})
 	b.count = 0
-	n, err := b.readBit()
+	_, err := b.readBit()
 	if err != io.EOF {
 		t.Errorf("Unexpected value: %v\n", err)
 	}
-	fmt.Println(n)
 }
 
 func TestReadByteEOF1(t *testing.T) {
