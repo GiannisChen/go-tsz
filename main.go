@@ -6,65 +6,11 @@ import (
 	"math/rand"
 	"os"
 	"text/tabwriter"
+	"time"
 
 	"github.com/dgryski/go-tsz"
 	"github.com/dgryski/go-tsz/testdata"
 )
-
-// collection of 24h worth of minutely points, with different characteristics.
-var ConstantZero = make([]testdata.Point, 60*24)
-var ConstantOne = make([]testdata.Point, 60*24)
-var ConstantPos3f = make([]testdata.Point, 60*24)
-var ConstantNeg3f = make([]testdata.Point, 60*24)
-var ConstantPos0f = make([]testdata.Point, 60*24)
-var ConstantNeg0f = make([]testdata.Point, 60*24)
-var ConstantNearMaxf = make([]testdata.Point, 60*24)
-var ConstantNearMinf = make([]testdata.Point, 60*24)
-var ConstantNearMax0f = make([]testdata.Point, 60*24)
-var ConstantNearMin0f = make([]testdata.Point, 60*24)
-var Batch100ZeroOne = make([]testdata.Point, 60*24)
-var FlappingZeroOne = make([]testdata.Point, 60*24)
-
-var RandomTinyPosf = make([]testdata.Point, 60*24)
-var RandomTinyf = make([]testdata.Point, 60*24)
-var RandomTinyPos2f = make([]testdata.Point, 60*24)
-var RandomTiny2f = make([]testdata.Point, 60*24)
-var RandomTinyPos1f = make([]testdata.Point, 60*24)
-var RandomTiny1f = make([]testdata.Point, 60*24)
-var RandomTinyPos0f = make([]testdata.Point, 60*24)
-var RandomTiny0f = make([]testdata.Point, 60*24)
-
-var RandomSmallPosf = make([]testdata.Point, 60*24)
-var RandomSmallf = make([]testdata.Point, 60*24)
-var RandomSmallPos2f = make([]testdata.Point, 60*24)
-var RandomSmall2f = make([]testdata.Point, 60*24)
-var RandomSmallPos1f = make([]testdata.Point, 60*24)
-var RandomSmall1f = make([]testdata.Point, 60*24)
-var RandomSmallPos0f = make([]testdata.Point, 60*24)
-var RandomSmall0f = make([]testdata.Point, 60*24)
-
-var Random60kPosf = make([]testdata.Point, 60*24)
-var Random60kf = make([]testdata.Point, 60*24)
-var Random60kPos2f = make([]testdata.Point, 60*24)
-var Random60k2f = make([]testdata.Point, 60*24)
-var Random60kPos1f = make([]testdata.Point, 60*24)
-var Random60k1f = make([]testdata.Point, 60*24)
-var Random60kPos0f = make([]testdata.Point, 60*24)
-var Random60k0f = make([]testdata.Point, 60*24)
-
-var SmallTestDataPosf = make([]testdata.Point, 60*24)
-var SmallTestDataf = make([]testdata.Point, 60*24)
-var SmallTestDataPos0f = make([]testdata.Point, 60*24)
-var SmallTestData0f = make([]testdata.Point, 60*24)
-
-var RandomLargePosf = make([]testdata.Point, 60*24)
-var RandomLargef = make([]testdata.Point, 60*24)
-var RandomLargePos0f = make([]testdata.Point, 60*24)
-var RandomLarge0f = make([]testdata.Point, 60*24)
-var LargeTestDataPosf = make([]testdata.Point, 60*24)
-var LargeTestDataPos0f = make([]testdata.Point, 60*24)
-var LargeTestDataf = make([]testdata.Point, 60*24)
-var LargeTestData0f = make([]testdata.Point, 60*24)
 
 func Round(f float64) float64 {
 	if f < 0 {
@@ -78,7 +24,62 @@ func RoundNum(f float64, places int) float64 {
 	return Round(f*shift) / shift
 }
 
-func main() {
+func TestMain() {
+	// collection of 24h worth of minutely points, with different characteristics.
+	var ConstantZero = make([]testdata.Point, 60*24)
+	var ConstantOne = make([]testdata.Point, 60*24)
+	var ConstantPos3f = make([]testdata.Point, 60*24)
+	var ConstantNeg3f = make([]testdata.Point, 60*24)
+	var ConstantPos0f = make([]testdata.Point, 60*24)
+	var ConstantNeg0f = make([]testdata.Point, 60*24)
+	var ConstantNearMaxf = make([]testdata.Point, 60*24)
+	var ConstantNearMinf = make([]testdata.Point, 60*24)
+	var ConstantNearMax0f = make([]testdata.Point, 60*24)
+	var ConstantNearMin0f = make([]testdata.Point, 60*24)
+	var Batch100ZeroOne = make([]testdata.Point, 60*24)
+	var FlappingZeroOne = make([]testdata.Point, 60*24)
+
+	var RandomTinyPosf = make([]testdata.Point, 60*24)
+	var RandomTinyf = make([]testdata.Point, 60*24)
+	var RandomTinyPos2f = make([]testdata.Point, 60*24)
+	var RandomTiny2f = make([]testdata.Point, 60*24)
+	var RandomTinyPos1f = make([]testdata.Point, 60*24)
+	var RandomTiny1f = make([]testdata.Point, 60*24)
+	var RandomTinyPos0f = make([]testdata.Point, 60*24)
+	var RandomTiny0f = make([]testdata.Point, 60*24)
+
+	var RandomSmallPosf = make([]testdata.Point, 60*24)
+	var RandomSmallf = make([]testdata.Point, 60*24)
+	var RandomSmallPos2f = make([]testdata.Point, 60*24)
+	var RandomSmall2f = make([]testdata.Point, 60*24)
+	var RandomSmallPos1f = make([]testdata.Point, 60*24)
+	var RandomSmall1f = make([]testdata.Point, 60*24)
+	var RandomSmallPos0f = make([]testdata.Point, 60*24)
+	var RandomSmall0f = make([]testdata.Point, 60*24)
+
+	var Random60kPosf = make([]testdata.Point, 60*24)
+	var Random60kf = make([]testdata.Point, 60*24)
+	var Random60kPos2f = make([]testdata.Point, 60*24)
+	var Random60k2f = make([]testdata.Point, 60*24)
+	var Random60kPos1f = make([]testdata.Point, 60*24)
+	var Random60k1f = make([]testdata.Point, 60*24)
+	var Random60kPos0f = make([]testdata.Point, 60*24)
+	var Random60k0f = make([]testdata.Point, 60*24)
+
+	var SmallTestDataPosf = make([]testdata.Point, 60*24)
+	var SmallTestDataf = make([]testdata.Point, 60*24)
+	var SmallTestDataPos0f = make([]testdata.Point, 60*24)
+	var SmallTestData0f = make([]testdata.Point, 60*24)
+
+	var RandomLargePosf = make([]testdata.Point, 60*24)
+	var RandomLargef = make([]testdata.Point, 60*24)
+	var RandomLargePos0f = make([]testdata.Point, 60*24)
+	var RandomLarge0f = make([]testdata.Point, 60*24)
+	var LargeTestDataPosf = make([]testdata.Point, 60*24)
+	var LargeTestDataPos0f = make([]testdata.Point, 60*24)
+	var LargeTestDataf = make([]testdata.Point, 60*24)
+	var LargeTestData0f = make([]testdata.Point, 60*24)
+
 	for i := 0; i < 60*24; i++ {
 		ts := uint64(i * 60)
 		ConstantZero[i] = testdata.Point{float64(0), ts}
@@ -254,4 +255,113 @@ func main() {
 	fmt.Fprintln(w, "random large pos      .0f\t"+do(RandomLargePos0f, cmtRandomLargePos))
 	fmt.Fprintln(w, "random large pos/neg  .0f\t"+do(RandomLarge0f, cmtRandomLargePosNeg))
 	w.Flush()
+}
+
+func TestFromDataExample() {
+	s1 := tsz.New(testdata.TwoHoursData[0].T)
+	for _, p := range testdata.TwoHoursData {
+		s1.Push(p.T, p.V)
+	}
+	it1 := s1.Iter()
+	it1.Next()
+	b, err := s1.MarshalBinary()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	s2 := tsz.New(s1.T0)
+	err = s2.UnmarshalBinary(b)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	it := s2.Iter()
+	for _, w := range testdata.TwoHoursData {
+		if !it.Next() {
+			fmt.Errorf("Next()=false, want true")
+		}
+		tt, vv := it.Values()
+		fmt.Printf("%d\t%f\n", tt, vv)
+		if w.T != tt || w.V != vv {
+			fmt.Errorf("Values()=(%v,%v), want (%v,%v)\n", tt, vv, w.T, w.V)
+		}
+	}
+}
+
+func TestFromPaperExample() {
+	// Example from the paper
+	t0, _ := time.ParseInLocation("Jan _2 2006 15:04:05", "Mar 24 2015 02:00:00", time.Local)
+	tmilli := uint64(t0.Unix() * 1000)
+
+	s := tsz.New(tmilli)
+
+	tmilli += 62
+	s.Push(tmilli, 12)
+
+	tmilli += 60
+	s.Push(tmilli, 12)
+
+	tmilli += 60
+	s.Push(tmilli, 24)
+
+	// extra tests
+
+	// floating point masking/shifting bug
+	tmilli += 60
+	s.Push(tmilli, 13)
+
+	tmilli += 60
+	s.Push(tmilli, 24)
+
+	// delta-of-delta sizes
+	tmilli += 300 // == delta-of-delta of 240
+	s.Push(tmilli, 24)
+
+	tmilli += 900 // == delta-of-delta of 600
+	s.Push(tmilli, 24)
+
+	tmilli += 900 + 2050 // == delta-of-delta of 600
+	s.Push(tmilli, 24)
+
+	it := s.Iter()
+
+	tmilli = uint64(t0.Unix() * 1000)
+	want := []struct {
+		t uint64
+		v float64
+	}{
+		{tmilli + 62, 12},
+		{tmilli + 122, 12},
+		{tmilli + 182, 24},
+
+		{tmilli + 242, 13},
+		{tmilli + 302, 24},
+
+		{tmilli + 602, 24},
+		{tmilli + 1502, 24},
+		{tmilli + 4452, 24},
+	}
+
+	for _, w := range want {
+		if !it.Next() {
+			fmt.Println("Next()=false, want true")
+			return
+		}
+		tt, vv := it.Values()
+		if w.t != tt || w.v != vv {
+			fmt.Printf("Values()=(%v,%v), want (%v,%v)\n", tt, vv, w.t, w.v)
+		}
+	}
+
+	if it.Next() {
+		fmt.Println("Next()=true, want false")
+	}
+
+	if err := it.Err(); err != nil {
+		fmt.Printf("it.Err()=%v, want nil", err)
+	}
+}
+
+func main() {
+	TestFromDataExample()
 }

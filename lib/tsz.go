@@ -57,7 +57,7 @@ func (s *Series) Bytes() []byte {
 func finish(w *bstream) {
 	// write an end-of-stream record
 	w.writeBits(0x0f, 4)
-	w.writeBits(0xffff_ffff_ffff_ffff, 64)
+	w.writeBits(0xffff_ffff, 32)
 	w.writeBit(zero)
 }
 
@@ -248,14 +248,14 @@ func (it *Iter) Next() bool {
 	case 0x0e:
 		sz = 12
 	case 0x0f:
-		bits, err := it.br.readBits(64)
+		bits, err := it.br.readBits(32)
 		if err != nil {
 			it.err = err
 			return false
 		}
 
 		// end of stream
-		if bits == 0xffff_ffff_ffff_ffff {
+		if bits == 0xffff_ffff {
 			it.finished = true
 			return false
 		}
