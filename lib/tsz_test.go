@@ -81,55 +81,55 @@ func TestExampleEncoding(t *testing.T) {
 
 	// Example from the paper
 	t0, _ := time.ParseInLocation("Jan _2 2006 15:04:05", "Mar 24 2015 02:00:00", time.Local)
-	tunix := uint32(t0.Unix())
+	tmilli := uint64(t0.Unix() * 1000)
 
-	s := New(tunix)
+	s := New(tmilli)
 
-	tunix += 62
-	s.Push(tunix, 12)
+	tmilli += 62
+	s.Push(tmilli, 12)
 
-	tunix += 60
-	s.Push(tunix, 12)
+	tmilli += 60
+	s.Push(tmilli, 12)
 
-	tunix += 60
-	s.Push(tunix, 24)
+	tmilli += 60
+	s.Push(tmilli, 24)
 
 	// extra tests
 
 	// floating point masking/shifting bug
-	tunix += 60
-	s.Push(tunix, 13)
+	tmilli += 60
+	s.Push(tmilli, 13)
 
-	tunix += 60
-	s.Push(tunix, 24)
+	tmilli += 60
+	s.Push(tmilli, 24)
 
 	// delta-of-delta sizes
-	tunix += 300 // == delta-of-delta of 240
-	s.Push(tunix, 24)
+	tmilli += 300 // == delta-of-delta of 240
+	s.Push(tmilli, 24)
 
-	tunix += 900 // == delta-of-delta of 600
-	s.Push(tunix, 24)
+	tmilli += 900 // == delta-of-delta of 600
+	s.Push(tmilli, 24)
 
-	tunix += 900 + 2050 // == delta-of-delta of 600
-	s.Push(tunix, 24)
+	tmilli += 900 + 2050 // == delta-of-delta of 600
+	s.Push(tmilli, 24)
 
 	it := s.Iter()
 
-	tunix = uint32(t0.Unix())
+	tmilli = uint64(t0.Unix() * 1000)
 	want := []struct {
-		t uint32
+		t uint64
 		v float64
 	}{
-		{tunix + 62, 12},
-		{tunix + 122, 12},
-		{tunix + 182, 24},
+		{tmilli + 62, 12},
+		{tmilli + 122, 12},
+		{tmilli + 182, 24},
 
-		{tunix + 242, 13},
-		{tunix + 302, 24},
+		{tmilli + 242, 13},
+		{tmilli + 302, 24},
 
-		{tunix + 602, 24},
-		{tunix + 1502, 24},
-		{tunix + 4452, 24},
+		{tmilli + 602, 24},
+		{tmilli + 1502, 24},
+		{tmilli + 4452, 24},
 	}
 
 	for _, w := range want {
@@ -305,17 +305,17 @@ func BenchmarkDecodeByteSlice(b *testing.B) {
 }
 
 func TestEncodeSimilarFloats(t *testing.T) {
-	tunix := uint32(time.Unix(0, 0).Unix())
-	s := New(tunix)
+	tmilli := uint64(time.Unix(0, 0).Unix())
+	s := New(tmilli)
 	want := []struct {
-		t uint32
+		t uint64
 		v float64
 	}{
-		{tunix, 6.00065e+06},
-		{tunix + 1, 6.000656e+06},
-		{tunix + 2, 6.000657e+06},
-		{tunix + 3, 6.000659e+06},
-		{tunix + 4, 6.000661e+06},
+		{tmilli, 6.00065e+06},
+		{tmilli + 1, 6.000656e+06},
+		{tmilli + 2, 6.000657e+06},
+		{tmilli + 3, 6.000659e+06},
+		{tmilli + 4, 6.000661e+06},
 	}
 
 	for _, v := range want {

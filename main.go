@@ -80,7 +80,7 @@ func RoundNum(f float64, places int) float64 {
 
 func main() {
 	for i := 0; i < 60*24; i++ {
-		ts := uint32(i * 60)
+		ts := uint64(i * 60)
 		ConstantZero[i] = testdata.Point{float64(0), ts}
 		ConstantOne[i] = testdata.Point{float64(1), ts}
 		ConstantPos3f[i] = testdata.Point{float64(1234.567), ts}

@@ -21,8 +21,8 @@ type Series struct {
 	sync.Mutex
 
 	// TODO(dgryski): timestamps in the paper are uint64
-	T0  uint32
-	t   uint32
+	T0  uint64
+	t   uint64
 	val float64
 
 	bw       bstream
@@ -30,18 +30,18 @@ type Series struct {
 	trailing uint8
 	finished bool
 
-	tDelta uint32
+	tDelta uint64
 }
 
 // New series
-func New(t0 uint32) *Series {
+func New(t0 uint64) *Series {
 	s := Series{
 		T0:      t0,
 		leading: ^uint8(0),
 	}
 
 	// block header
-	s.bw.writeBits(uint64(t0), 32)
+	s.bw.writeBits(uint64(t0), 64)
 
 	return &s
 
@@ -57,7 +57,7 @@ func (s *Series) Bytes() []byte {
 func finish(w *bstream) {
 	// write an end-of-stream record
 	w.writeBits(0x0f, 4)
-	w.writeBits(0xffffffff, 32)
+	w.writeBits(0xffff_ffff_ffff_ffff, 64)
 	w.writeBit(zero)
 }
 
@@ -72,7 +72,7 @@ func (s *Series) Finish() {
 }
 
 // Push a timestamp and value to the series
-func (s *Series) Push(t uint32, v float64) {
+func (s *Series) Push(t uint64, v float64) {
 	s.Lock()
 	defer s.Unlock()
 
@@ -81,6 +81,7 @@ func (s *Series) Push(t uint32, v float64) {
 		s.t = t
 		s.val = v
 		s.tDelta = t - s.T0
+		//what is this mean?
 		s.bw.writeBits(uint64(s.tDelta), 14)
 		s.bw.writeBits(math.Float64bits(v), 64)
 		return
@@ -143,7 +144,6 @@ func (s *Series) Push(t uint32, v float64) {
 	s.tDelta = tDelta
 	s.t = t
 	s.val = v
-
 }
 
 // Iter lets you iterate over a series.  It is not concurrency-safe.
@@ -159,9 +159,9 @@ func (s *Series) Iter() *Iter {
 
 // Iter lets you iterate over a series.  It is not concurrency-safe.
 type Iter struct {
-	T0 uint32
+	T0 uint64
 
-	t   uint32
+	t   uint64
 	val float64
 
 	br       bstream
@@ -170,7 +170,7 @@ type Iter struct {
 
 	finished bool
 
-	tDelta uint32
+	tDelta uint64
 	err    error
 }
 
@@ -178,13 +178,13 @@ func bstreamIterator(br *bstream) (*Iter, error) {
 
 	br.count = 8
 
-	t0, err := br.readBits(32)
+	t0, err := br.readBits(64)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Iter{
-		T0: uint32(t0),
+		T0: uint64(t0),
 		br: *br,
 	}, nil
 }
@@ -208,7 +208,7 @@ func (it *Iter) Next() bool {
 			it.err = err
 			return false
 		}
-		it.tDelta = uint32(tDelta)
+		it.tDelta = uint64(tDelta)
 		it.t = it.T0 + it.tDelta
 		v, err := it.br.readBits(64)
 		if err != nil {
@@ -236,7 +236,7 @@ func (it *Iter) Next() bool {
 		d |= 1
 	}
 
-	var dod int32
+	var dod int64
 	var sz uint
 	switch d {
 	case 0x00:
@@ -248,19 +248,19 @@ func (it *Iter) Next() bool {
 	case 0x0e:
 		sz = 12
 	case 0x0f:
-		bits, err := it.br.readBits(32)
+		bits, err := it.br.readBits(64)
 		if err != nil {
 			it.err = err
 			return false
 		}
 
 		// end of stream
-		if bits == 0xffffffff {
+		if bits == 0xffff_ffff_ffff_ffff {
 			it.finished = true
 			return false
 		}
 
-		dod = int32(bits)
+		dod = int64(bits)
 	}
 
 	if sz != 0 {
@@ -273,10 +273,10 @@ func (it *Iter) Next() bool {
 			// or something
 			bits = bits - (1 << sz)
 		}
-		dod = int32(bits)
+		dod = int64(bits)
 	}
 
-	tDelta := it.tDelta + uint32(dod)
+	tDelta := it.tDelta + uint64(dod)
 
 	it.tDelta = tDelta
 	it.t = it.t + it.tDelta
@@ -335,7 +335,7 @@ func (it *Iter) Next() bool {
 }
 
 // Values at the current iterator position
-func (it *Iter) Values() (uint32, float64) {
+func (it *Iter) Values() (uint64, float64) {
 	return it.t, it.val
 }
 
