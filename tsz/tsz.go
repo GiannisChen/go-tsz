@@ -20,7 +20,6 @@ import (
 type Series struct {
 	sync.Mutex
 
-	// TODO(dgryski): timestamps in the paper are uint64
 	T0  uint64
 	t   uint64
 	val float64

@@ -1,5 +1,27 @@
 # go-tsz
 
+## Write Before
+
+- This is a fork from github.com/dgryski/go-tsz.
+
+  
+
+## What I have done
+
+1. complete `TODO(dgryski): timestamps in the paper are uint64`.
+
+
+
+## TODO List
+
+- [ ] find bugs.
+
+
+
+---
+
+## The original README👇(Sadly Cannot Work Any More in This Fork)
+
 * Package tsz implement time-series compression http://www.vldb.org/pvldb/vol8/p1816-teller.pdf in Go*
 
 [![Master Branch](https://img.shields.io/badge/branch-master-lightgray.svg)](https://github.com/dgryski/go-tsz/tree/master)
@@ -9,7 +31,7 @@
 [![GoDoc](https://godoc.org/github.com/dgryski/go-tsz?status.svg)](http://godoc.org/github.com/dgryski/go-tsz)
 
 ## Description
- 
+
 Package tsz implement the  Gorilla Time Series Databasetime-series compression as described in:
 http://www.vldb.org/pvldb/vol8/p1816-teller.pdf
 
