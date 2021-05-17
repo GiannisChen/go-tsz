@@ -8,8 +8,8 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/dgryski/go-tsz"
-	"github.com/dgryski/go-tsz/testdata"
+	"go-tsz/testdata"
+	"go-tsz/tsz"
 )
 
 func Round(f float64) float64 {

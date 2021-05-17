@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dgryski/go-tsz/testdata"
+	"go-tsz/testdata"
 )
 
 func TestMarshalBinary(t *testing.T) {
