@@ -278,12 +278,12 @@ func TestFromDataExample() {
 	it := s2.Iter()
 	for _, w := range testdata.TwoHoursData {
 		if !it.Next() {
-			fmt.Errorf("Next()=false, want true")
+			_ = fmt.Errorf("Next()=false, want true")
 		}
 		tt, vv := it.Values()
 		fmt.Printf("%d\t%f\n", tt, vv)
 		if w.T != tt || w.V != vv {
-			fmt.Errorf("Values()=(%v,%v), want (%v,%v)\n", tt, vv, w.T, w.V)
+			_ = fmt.Errorf("Values()=(%v,%v), want (%v,%v)", tt, vv, w.T, w.V)
 		}
 	}
 }
